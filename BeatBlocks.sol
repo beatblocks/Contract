@@ -35,16 +35,73 @@ contract Artist {
     address owner;
     address factory;
     
-    struct Song {
+    struct Collection {
         string name;
-        address artist;
+        string[] songIpfsAddresses;
         uint price;
-        string publicKey;
-        string privateKey;
+        bool isValid;
     }
     
-    function Artist(address _owner) {
+    struct Song {
+        string name;
+        uint price;
+        bool isValid;
+    }
+    
+    mapping(string => Song) songs;
+    mapping(string => Collection) collections;
+    
+    string[] songList;
+    string[] collectionList;
+    
+    function Artist(address _owner) public {
         owner = _owner;
         factory = msg.sender;
     }
+    
+    function createSong(string _ipfsAddress, string _name, uint _price) public {
+        if (songs[_ipfsAddress].isValid) {
+            return;
+        }
+        
+        var song = songs[_ipfsAddress];
+        song.name = _name;
+        song.price = _price;
+        song.isValid = true;
+        
+        songList.push(_ipfsAddress) -1;
+    }
+    
+    function createCollection(string _name, uint _price) public {
+        if (collections[_name].isValid) {
+            return;
+        }
+        
+        var collection = collections[_name];
+        collection.name = _name;
+        collection.price = _price;
+        
+        collectionList.push(_name) -1;
+    }
+    
+    function addSongToCollection(string _songIpfs, string _collectionName) public {
+        collections[_collectionName].songIpfsAddresses.push(_songIpfs) -1;
+    }
+    
+    /*
+    function getSongs() public view returns (string[]) {
+        return songList;
+    }
+    
+    function getSong(string _ipfsAddress) public view returns(string, uint) {
+        return (songs[_ipfsAddress].name, songs[_ipfsAddress].price);
+    }
+    
+    function getCollections() public view returns (string[]) {
+        return collectionList;
+    }
+    
+    function getCollection(string _name) public view returns(string, string[], uint) {
+        return (collections[_name].name, collections[_name].songIpfsAddresses, collections[_name].price);
+    }*/
 }
